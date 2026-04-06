@@ -24,13 +24,13 @@ function Dashboard() {
             axios.get(`${API_BASE_URL}/api/events/`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            axios.get(`${API_BASE_URL}api/participants/`, {
+            axios.get(`${API_BASE_URL}/api/participants/`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            axios.get(`${API_BASE_URL}api/registrations/`, {
+            axios.get(`${API_BASE_URL}/api/registrations/`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            axios.get(`${API_BASE_URL}api/me/`, {
+            axios.get(`${API_BASE_URL}/api/me/`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
           ]);
