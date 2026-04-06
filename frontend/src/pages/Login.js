@@ -17,7 +17,7 @@ function Login() {
     setMessage("");
 
     try {
-      const res = await axios.post('${API_BASE_URL}/api/token/', {
+      const res = await axios.post(`${API_BASE_URL}/api/token/`, {
         username,
         password,
       });
