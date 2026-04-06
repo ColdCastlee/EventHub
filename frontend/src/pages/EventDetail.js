@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, Link, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../styles/eventDetail.css";
+import API_BASE_URL from "../config";
 
 function EventDetail() {
   const { id } = useParams();
@@ -31,22 +32,22 @@ function EventDetail() {
     try {
       const [eventRes, registrationsRes, participantsRes, userRes] =
         await Promise.all([
-          axios.get(`http://127.0.0.1:8000/api/events/${id}/`, {
+          axios.get(`${API_BASE_URL}/api/events/${id}/`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }),
-          axios.get("http://127.0.0.1:8000/api/registrations/", {
+          axios.get(`${API_BASE_URL}/api/registrations/`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }),
-          axios.get("http://127.0.0.1:8000/api/participants/", {
+          axios.get(`${API_BASE_URL}/api/participants/`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }),
-          axios.get("http://127.0.0.1:8000/api/me/", {
+          axios.get(`${API_BASE_URL}/api/me/`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -108,7 +109,7 @@ function EventDetail() {
   const handleRegister = async () => {
     try {
       await axios.post(
-        "http://127.0.0.1:8000/api/registrations/",
+        `${API_BASE_URL}/api/registrations/`,
         {
           event: Number(id),
         },
@@ -141,7 +142,7 @@ function EventDetail() {
       }
 
       await axios.delete(
-        `http://127.0.0.1:8000/api/registrations/${registration.id}/`,
+        `${API_BASE_URL}/api/registrations/${registration.id}/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -166,7 +167,7 @@ function EventDetail() {
 
     try {
       await axios.delete(
-        `http://127.0.0.1:8000/api/registrations/${registrationId}/`,
+        `${API_BASE_URL}/api/registrations/${registrationId}/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -208,7 +209,7 @@ function EventDetail() {
       }
 
       await axios.put(
-        `http://127.0.0.1:8000/api/events/${id}/`,
+         `${API_BASE_URL}/api/events/${id}/`,
         {
           title: editForm.title,
           description: editForm.description,
@@ -244,7 +245,7 @@ function EventDetail() {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/events/${id}/`, {
+      await axios.delete(`${API_BASE_URL}/api/events/${id}/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

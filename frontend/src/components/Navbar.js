@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/navbar.css";
+import API_BASE_URL from "../config";
 
 function Navbar() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -17,7 +18,7 @@ function Navbar() {
       }
 
       try {
-        const res = await axios.get("http://127.0.0.1:8000/api/me/", {
+        const res = await axios.get(`${API_BASE_URL}/api/me/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

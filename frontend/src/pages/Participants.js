@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import "../styles/participants.css";
+import API_BASE_URL from "../config";
 
 function Participants() {
   const [participants, setParticipants] = useState([]);
@@ -15,12 +16,12 @@ function Participants() {
     const fetchData = async () => {
       try {
         const [participantsRes, userRes] = await Promise.all([
-          axios.get("http://127.0.0.1:8000/api/participants/", {
+          axios.get(`${API_BASE_URL}/api/participants/`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }),
-          axios.get("http://127.0.0.1:8000/api/me/", {
+          axios.get(`${API_BASE_URL}/api/me/`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

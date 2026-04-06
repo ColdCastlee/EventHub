@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../styles/dashboard.css";
+import API_BASE_URL from "../config";
 
 function Dashboard() {
   const [events, setEvents] = useState([]);
@@ -19,16 +20,16 @@ function Dashboard() {
       try {
         const [eventsRes, participantsRes, registrationsRes, meRes] =
           await Promise.all([
-            axios.get("http://127.0.0.1:8000/api/events/", {
+            axios.get(`${API_BASE_URL}/api/events/`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            axios.get("http://127.0.0.1:8000/api/participants/", {
+            axios.get(`${API_BASE_URL}api/participants/`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            axios.get("http://127.0.0.1:8000/api/registrations/", {
+            axios.get(`${API_BASE_URL}api/registrations/`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
-            axios.get("http://127.0.0.1:8000/api/me/", {
+            axios.get(`${API_BASE_URL}api/me/`, {
               headers: { Authorization: `Bearer ${token}` },
             }),
           ]);

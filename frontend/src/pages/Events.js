@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../styles/events.css";
+import API_BASE_URL from "../config";
 
 function Events() {
   const [events, setEvents] = useState([]);
@@ -21,7 +22,7 @@ function Events() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const eventsRes = await axios.get("http://127.0.0.1:8000/api/events/", {
+        const eventsRes = await axios.get(`${API_BASE_URL}/api/events/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setEvents(eventsRes.data);
@@ -31,7 +32,7 @@ function Events() {
       }
 
       try {
-        const userRes = await axios.get("http://127.0.0.1:8000/api/me/", {
+        const userRes = await axios.get(`${API_BASE_URL}/api/me/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setCurrentUser(userRes.data);
@@ -46,7 +47,7 @@ function Events() {
 
   const fetchEventsOnly = async () => {
     try {
-      const eventsRes = await axios.get("http://127.0.0.1:8000/api/events/", {
+      const eventsRes = await axios.get(`${API_BASE_URL}/api/events/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setEvents(eventsRes.data);
@@ -68,7 +69,7 @@ function Events() {
       }
 
       await axios.post(
-        "http://127.0.0.1:8000/api/events/",
+        `${API_BASE_URL}/api/events/`,
         {
           title,
           description,
