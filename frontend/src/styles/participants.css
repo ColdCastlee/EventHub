@@ -1,0 +1,95 @@
+.participants-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  box-sizing: border-box;
+}
+
+.participants-header {
+  margin-bottom: 24px;
+}
+
+.participants-title {
+  margin: 0 0 8px 0;
+  font-size: 42px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.participants-subtitle {
+  margin: 0;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.participants-message {
+  margin-bottom: 20px;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.participants-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.participant-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.participant-card-left {
+  flex: 1;
+}
+
+.participant-name {
+  margin: 0 0 12px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.participant-detail {
+  margin: 8px 0;
+  font-size: 15px;
+  color: #1f2937;
+  line-height: 1.6;
+}
+
+.participants-empty {
+  background: #ffffff;
+  border: 1px dashed #d1d5db;
+  border-radius: 16px;
+  padding: 24px;
+  color: #6b7280;
+}
+.participants-admin-panel {
+  margin-bottom: 24px;
+}
+
+.participants-admin-card {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 18px 22px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.participants-admin-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.participants-admin-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+}

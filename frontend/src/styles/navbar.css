@@ -1,0 +1,28 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.navbar-left,
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-link {
+  text-decoration: none;
+  color: black;
+}
+
+.navbar-user {
+  font-weight: bold;
+}
+
+.navbar-logout {
+  cursor: pointer;
+}
