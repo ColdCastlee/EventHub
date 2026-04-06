@@ -1,95 +1,53 @@
 .participants-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 32px 24px;
-  box-sizing: border-box;
-}
-
-.participants-header {
-  margin-bottom: 24px;
+  background: #0f172a;
+  min-height: 100vh;
+  padding: 30px;
+  color: #e2e8f0;
 }
 
 .participants-title {
-  margin: 0 0 8px 0;
-  font-size: 42px;
-  font-weight: 700;
-  color: #111827;
+  font-size: 26px;
+  font-weight: bold;
 }
 
 .participants-subtitle {
-  margin: 0;
-  color: #6b7280;
-  font-size: 16px;
-}
-
-.participants-message {
+  color: #94a3b8;
   margin-bottom: 20px;
-  color: #2563eb;
-  font-weight: 500;
 }
 
 .participants-list {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
 }
 
 .participant-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 18px;
-  padding: 24px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  background: #1e293b;
+  padding: 18px;
+  border-radius: 16px;
+  transition: 0.3s;
 }
 
-.participant-card-left {
-  flex: 1;
+.participant-card:hover {
+  transform: translateY(-5px);
 }
 
 .participant-name {
-  margin: 0 0 12px 0;
-  font-size: 24px;
-  font-weight: 700;
-  color: #111827;
-}
-
-.participant-detail {
-  margin: 8px 0;
-  font-size: 15px;
-  color: #1f2937;
-  line-height: 1.6;
-}
-
-.participants-empty {
-  background: #ffffff;
-  border: 1px dashed #d1d5db;
-  border-radius: 16px;
-  padding: 24px;
-  color: #6b7280;
-}
-.participants-admin-panel {
-  margin-bottom: 24px;
-}
-
-.participants-admin-card {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 8px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 18px 22px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-}
-
-.participants-admin-label {
-  font-size: 14px;
-  color: #6b7280;
+  font-size: 18px;
   font-weight: 600;
 }
 
-.participants-admin-value {
-  font-size: 32px;
-  font-weight: 700;
-  color: #111827;
+.participant-detail {
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  background: #38bdf8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
