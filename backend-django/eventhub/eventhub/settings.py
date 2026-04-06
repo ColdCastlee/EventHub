@@ -5,6 +5,9 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ========================
+# SECURITY
+# ========================
 SECRET_KEY = os.environ.get(
     "SECRET_KEY",
     "django-insecure-a!@m#(*_xk!e2v_hmtb#wlysd#zg(2g&0gtpi@ybrk*d^k6ug@"
@@ -18,6 +21,9 @@ ALLOWED_HOSTS = [
     ".onrender.com",
 ]
 
+# ========================
+# APPS
+# ========================
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -31,6 +37,9 @@ INSTALLED_APPS = [
     "api",
 ]
 
+# ========================
+# MIDDLEWARE
+# ========================
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -45,6 +54,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "eventhub.urls"
 
+# ========================
+# TEMPLATES
+# ========================
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -63,13 +75,20 @@ TEMPLATES = [
 WSGI_APPLICATION = "eventhub.wsgi.application"
 ASGI_APPLICATION = "eventhub.asgi.application"
 
+# ========================
+# DATABASE
+# ========================
 DATABASES = {
     "default": dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
+        conn_max_age=60,             
+        conn_health_checks=True,     
     )
 }
 
+# ========================
+# PASSWORD VALIDATION
+# ========================
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -85,17 +104,25 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# ========================
+# INTERNATIONALIZATION
+# ========================
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
+# ========================
+# STATIC FILES（Render必须）
+# ========================
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# WhiteNoise compressed static files
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+# ========================
+# REST FRAMEWORK
+# ========================
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -105,11 +132,21 @@ REST_FRAMEWORK = {
     ],
 }
 
+# ========================
+# JWT
+# ========================
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
+# ========================
+# DEFAULT FIELD
+# ========================
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# ========================
+# CORS
+# ========================
 CORS_ALLOW_ALL_ORIGINS = True
+
