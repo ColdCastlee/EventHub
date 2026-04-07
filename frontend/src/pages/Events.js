@@ -22,22 +22,24 @@ function Events() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const eventsRes = await axios.get(`${API_BASE_URL}/api/events/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const eventsRes = await axios.get(`${API_BASE_URL}/api/events/`);
         setEvents(eventsRes.data);
       } catch (err) {
         console.error("Failed to load events:", err);
         setEvents([]);
       }
 
-      try {
-        const userRes = await axios.get(`${API_BASE_URL}/api/me/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setCurrentUser(userRes.data);
-      } catch (err) {
-        console.error("Failed to load current user:", err);
+      if (token) {
+        try {
+          const userRes = await axios.get(`${API_BASE_URL}/api/me/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setCurrentUser(userRes.data);
+        } catch (err) {
+          console.error("Failed to load current user:", err);
+          setCurrentUser(null);
+        }
+      } else {
         setCurrentUser(null);
       }
     };
@@ -47,9 +49,7 @@ function Events() {
 
   const fetchEventsOnly = async () => {
     try {
-      const eventsRes = await axios.get(`${API_BASE_URL}/api/events/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const eventsRes = await axios.get(`${API_BASE_URL}/api/events/`);
       setEvents(eventsRes.data);
     } catch (err) {
       console.error("Failed to reload events:", err);
@@ -179,7 +179,9 @@ function Events() {
     return (
       <section className="events-section">
         <h3 className={`events-section-title ${status}`}>{title}</h3>
-        <div className="events-list">{items.map((event) => renderEventCard(event))}</div>
+        <div className="events-list">
+          {items.map((event) => renderEventCard(event))}
+        </div>
       </section>
     );
   };

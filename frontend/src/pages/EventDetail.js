@@ -30,36 +30,10 @@ function EventDetail() {
 
   const fetchEvent = useCallback(async () => {
     try {
-      const [eventRes, registrationsRes, participantsRes, userRes] =
-        await Promise.all([
-          axios.get(`${API_BASE_URL}/api/events/${id}/`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-          axios.get(`${API_BASE_URL}/api/registrations/`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-          axios.get(`${API_BASE_URL}/api/participants/`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-          axios.get(`${API_BASE_URL}/api/me/`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-        ]);
-
+      const eventRes = await axios.get(`${API_BASE_URL}/api/events/${id}/`);
       const eventData = eventRes.data;
 
       setEvent(eventData);
-      setRegistrations(registrationsRes.data);
-      setParticipants(participantsRes.data);
-      setCurrentUser(userRes.data);
 
       setEditForm({
         title: eventData.title || "",
@@ -72,6 +46,42 @@ function EventDetail() {
           ? eventData.end_time.slice(0, 16)
           : "",
       });
+
+      if (token) {
+        try {
+          const [registrationsRes, participantsRes, userRes] =
+            await Promise.all([
+              axios.get(`${API_BASE_URL}/api/registrations/`, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }),
+              axios.get(`${API_BASE_URL}/api/participants/`, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }),
+              axios.get(`${API_BASE_URL}/api/me/`, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }),
+            ]);
+
+          setRegistrations(registrationsRes.data);
+          setParticipants(participantsRes.data);
+          setCurrentUser(userRes.data);
+        } catch (err) {
+          console.error("Failed to load authenticated user data:", err);
+          setRegistrations([]);
+          setParticipants([]);
+          setCurrentUser(null);
+        }
+      } else {
+        setRegistrations([]);
+        setParticipants([]);
+        setCurrentUser(null);
+      }
     } catch (err) {
       console.error(err);
       setMessage("Failed to load event.");
@@ -209,7 +219,7 @@ function EventDetail() {
       }
 
       await axios.put(
-         `${API_BASE_URL}/api/events/${id}/`,
+        `${API_BASE_URL}/api/events/${id}/`,
         {
           title: editForm.title,
           description: editForm.description,
@@ -281,6 +291,8 @@ function EventDetail() {
   const currentEventRegistrations = registrations.filter(
     (r) => r.event === Number(id)
   );
+
+  const isLoggedIn = !!token && !!currentUser;
 
   if (!event) {
     return (
@@ -382,8 +394,8 @@ function EventDetail() {
           )}
 
           <div className="event-action-row">
-            {!isAdmin &&
-              (registrationAvailable ? (
+            {!isAdmin && isLoggedIn && (
+              registrationAvailable ? (
                 isRegistered() ? (
                   <button className="btn leave" onClick={handleLeave}>
                     Leave
@@ -399,7 +411,14 @@ function EventDetail() {
                 </p>
               ) : (
                 <p className="disabled-text">Registration is not available.</p>
-              ))}
+              )
+            )}
+
+            {!isAdmin && !isLoggedIn && (
+              <p className="disabled-text">
+                Log in to register for this event.
+              </p>
+            )}
           </div>
 
           <div className="event-info-grid">
@@ -419,31 +438,38 @@ function EventDetail() {
 
           <div className="participants-section">
             <h3>Participants</h3>
-            <p>
-              <strong>Total:</strong> {currentEventRegistrations.length}
-            </p>
 
-            {currentEventRegistrations.length > 0 ? (
-              <div className="participants-list">
-                {currentEventRegistrations.map((r) => (
-                  <div key={r.id} className="participant-item participant-row">
-                    <span className="participant-name">
-                      {r.participant_name || `Participant #${r.participant}`}
-                    </span>
+            {isLoggedIn ? (
+              <>
+                <p>
+                  <strong>Total:</strong> {currentEventRegistrations.length}
+                </p>
 
-                    {isAdmin && (
-                      <button
-                        className="danger-button small-button"
-                        onClick={() => handleAdminRemoveParticipant(r.id)}
-                      >
-                        Remove
-                      </button>
-                    )}
+                {currentEventRegistrations.length > 0 ? (
+                  <div className="participants-list">
+                    {currentEventRegistrations.map((r) => (
+                      <div key={r.id} className="participant-item participant-row">
+                        <span className="participant-name">
+                          {r.participant_name || `Participant #${r.participant}`}
+                        </span>
+
+                        {isAdmin && (
+                          <button
+                            className="danger-button small-button"
+                            onClick={() => handleAdminRemoveParticipant(r.id)}
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                ) : (
+                  <p>No participants yet.</p>
+                )}
+              </>
             ) : (
-              <p>No participants yet.</p>
+              <p>Log in to view participant details.</p>
             )}
           </div>
 

@@ -37,36 +37,56 @@ function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
+    localStorage.removeItem("username");
+    setCurrentUser(null);
     navigate("/login");
   };
+
+  const isLoggedIn = !!currentUser;
+  const isAdmin = currentUser?.is_staff || currentUser?.is_superuser;
 
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <Link className="navbar-link" to="/dashboard">
-          Dashboard
-        </Link>
-        <span className="navbar-separator">|</span>
+        {isLoggedIn && (
+          <>
+            <Link className="navbar-link" to="/dashboard">
+              Dashboard
+            </Link>
+            <span className="navbar-separator">|</span>
+          </>
+        )}
 
         <Link className="navbar-link" to="/events">
           Events
         </Link>
-        <span className="navbar-separator">|</span>
 
-        <Link className="navbar-link" to="/participants">
-          Participants
-        </Link>
+        {isAdmin && (
+          <>
+            <span className="navbar-separator">|</span>
+            <Link className="navbar-link" to="/participants">
+              Participants
+            </Link>
+          </>
+        )}
       </div>
 
       <div className="navbar-right">
-        <span className="navbar-user">
-          {currentUser?.username || "User"}
-        </span>
-        <span className="navbar-separator">|</span>
-
-        <button className="navbar-logout" onClick={handleLogout}>
-          Logout
-        </button>
+        {isLoggedIn ? (
+          <>
+            <span className="navbar-user">
+              {currentUser?.username || "User"}
+            </span>
+            <span className="navbar-separator">|</span>
+            <button className="navbar-logout" onClick={handleLogout}>
+              Logout
+            </button>
+          </>
+        ) : (
+          <Link className="navbar-link" to="/login">
+            Login
+          </Link>
+        )}
       </div>
     </nav>
   );

@@ -13,7 +13,6 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     setMessage("");
 
     try {
@@ -24,12 +23,20 @@ function Login() {
 
       localStorage.setItem("access", res.data.access);
       localStorage.setItem("refresh", res.data.refresh);
+      localStorage.setItem("username", username);
 
       navigate("/dashboard");
     } catch (err) {
       console.error(err);
       setMessage("Invalid username or password.");
     }
+  };
+
+  const handleViewerAccess = () => {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("username");
+    navigate("/events");
   };
 
   return (
@@ -67,9 +74,19 @@ function Login() {
             />
           </div>
 
-          <button className="login-button" type="submit">
-            Login
-          </button>
+          <div className="login-actions">
+            <button className="login-button" type="submit">
+              Login
+            </button>
+
+            <button
+              className="viewer-button"
+              type="button"
+              onClick={handleViewerAccess}
+            >
+              Browse as Viewer
+            </button>
+          </div>
         </form>
 
         <p className="login-footer">
