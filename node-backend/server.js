@@ -1,54 +1,51 @@
 const express = require("express");
-const cors = require("cors");
-
+const sqlite3 = require("sqlite3").verbose();
 const app = express();
-app.use(cors());
+
 app.use(express.json());
 
-// ===== Fake DB =====
-let events = [
-  {
-    id: 1,
-    title: "Node Event",
-    description: "This is a test event",
-    location: "Paris",
-  },
-];
+// DB
+const db = new sqlite3.Database("./db.sqlite");
 
-// Root route
-app.get("/", (req, res) => {
-  res.send("Node backend is running");
-});
+// 创建表
+db.run(`
+CREATE TABLE IF NOT EXISTS events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT,
+  date TEXT
+)
+`);
 
-// GET all events
+// GET all
 app.get("/events", (req, res) => {
-  res.json(events);
+  db.all("SELECT * FROM events", [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
 });
 
-// GET one event
-app.get("/events/:id", (req, res) => {
-  const event = events.find((e) => e.id == req.params.id);
-  if (!event) return res.status(404).json({ error: "Not found" });
-  res.json(event);
-});
-
-// CREATE event
+// CREATE
 app.post("/events", (req, res) => {
-  const newEvent = {
-    id: events.length + 1,
-    ...req.body,
-  };
-  events.push(newEvent);
-  res.json(newEvent);
+  const { title, date } = req.body;
+  db.run(
+    "INSERT INTO events (title, date) VALUES (?, ?)",
+    [title, date],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ id: this.lastID, title, date });
+    }
+  );
 });
 
-// DELETE event
+// DELETE
 app.delete("/events/:id", (req, res) => {
-  events = events.filter((e) => e.id != req.params.id);
-  res.json({ message: "Deleted" });
+  db.run("DELETE FROM events WHERE id = ?", [req.params.id], function (err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: "Deleted" });
+  });
 });
 
 // Start
 app.listen(3001, () => {
-  console.log("Node server running on http://localhost:3001");
+  console.log("Node API running on port 3001");
 });
