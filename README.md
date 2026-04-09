@@ -78,5 +78,5 @@ This allows a direct comparison between structured and lightweight backend appro
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/eventhub.git
+git clone https://github.com/ColdCastlee/eventhub.git
 cd eventhub
