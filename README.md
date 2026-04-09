@@ -71,12 +71,3 @@ The Node.js backend replicates the same core logic:
 
 This allows a direct comparison between structured and lightweight backend approaches.
 
----
-
-## 🚀 Getting Started
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/ColdCastlee/eventhub.git
-cd eventhub
