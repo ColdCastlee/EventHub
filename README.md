@@ -257,11 +257,6 @@ This project is developed for academic purposes (Université Paris Cité — Web
 
 ---
 
-## 🎥 Demo
-
-(Add screenshots or demo GIF here if possible)
-
----
 
 ## 🙌 Acknowledgements
 
