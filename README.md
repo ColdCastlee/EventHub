@@ -157,13 +157,13 @@ DELETE  /api/registrations/{id}/
 
 ### 🌐 Frontend
 
-- Hosted on: *(e.g. Vercel / Netlify / Render)*
-- URL: https://your-frontend-url.com
+- Hosted on: Render
+- URL：https://eventhub-frontend-5sdg.onrender.com
 
 ### 🔧 Backend (Django)
 
 - Hosted on: Render
-- URL: https://your-backend-url.com
+- URL: https://eventhub-gbu9.onrender.com
 
 ### 🗄️ Database
 
@@ -175,7 +175,7 @@ DELETE  /api/registrations/{id}/
 
 ### 1️⃣ Clone the repository
 
-git clone https://github.com/your-username/EventHub.git
+git clone https://github.com/ColdCastlee/EventHub.git
 cd EventHub
 
 ---
