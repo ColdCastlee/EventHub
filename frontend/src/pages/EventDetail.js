@@ -13,7 +13,6 @@ function EventDetail() {
 
   const [event, setEvent] = useState(null);
   const [registrations, setRegistrations] = useState([]);
-  const [participants, setParticipants] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [message, setMessage] = useState("");
 
@@ -49,37 +48,28 @@ function EventDetail() {
 
       if (token) {
         try {
-          const [registrationsRes, participantsRes, userRes] =
-            await Promise.all([
-              axios.get(`${API_BASE_URL}/api/registrations/`, {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }),
-              axios.get(`${API_BASE_URL}/api/participants/`, {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }),
-              axios.get(`${API_BASE_URL}/api/me/`, {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }),
-            ]);
+          const [registrationsRes, userRes] = await Promise.all([
+            axios.get(`${API_BASE_URL}/api/registrations/`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }),
+            axios.get(`${API_BASE_URL}/api/me/`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }),
+          ]);
 
           setRegistrations(registrationsRes.data);
-          setParticipants(participantsRes.data);
           setCurrentUser(userRes.data);
         } catch (err) {
           console.error("Failed to load authenticated user data:", err);
           setRegistrations([]);
-          setParticipants([]);
           setCurrentUser(null);
         }
       } else {
         setRegistrations([]);
-        setParticipants([]);
         setCurrentUser(null);
       }
     } catch (err) {
@@ -92,27 +82,26 @@ function EventDetail() {
     fetchEvent();
   }, [fetchEvent]);
 
-  const currentParticipant = participants.find(
-    (p) => p.user === currentUser?.id
-  );
+  const currentParticipantId = currentUser?.participant?.participant_id || null;
 
-  const isAdmin = currentUser?.is_staff || currentUser?.is_superuser;
+  const isAdmin =
+    currentUser?.participant?.role === "admin" ||
+    currentUser?.is_staff ||
+    currentUser?.is_superuser;
 
   const isRegistered = () => {
-    if (!currentParticipant) return false;
+    if (!currentParticipantId) return false;
 
     return registrations.some(
-      (r) =>
-        r.event === Number(id) && r.participant === currentParticipant.id
+      (r) => r.event === Number(id) && r.participant === currentParticipantId
     );
   };
 
   const getCurrentRegistration = () => {
-    if (!currentParticipant) return null;
+    if (!currentParticipantId) return null;
 
     return registrations.find(
-      (r) =>
-        r.event === Number(id) && r.participant === currentParticipant.id
+      (r) => r.event === Number(id) && r.participant === currentParticipantId
     );
   };
 
@@ -130,15 +119,17 @@ function EventDetail() {
         }
       );
 
-      setMessage("Registered successfully!");
+      setMessage("Registered successfully.");
       await fetchEvent();
     } catch (err) {
       console.error(err);
-      if (err.response?.data) {
-        setMessage(JSON.stringify(err.response.data));
-      } else {
-        setMessage("Failed to register.");
-      }
+
+      const errorMessage =
+        err?.response?.data?.detail ||
+        err?.response?.data?.participant ||
+        "Failed to register.";
+
+      setMessage(Array.isArray(errorMessage) ? errorMessage[0] : errorMessage);
     }
   };
 
@@ -164,7 +155,11 @@ function EventDetail() {
       await fetchEvent();
     } catch (err) {
       console.error(err);
-      setMessage("Failed to leave event.");
+
+      const errorMessage =
+        err?.response?.data?.detail || "Failed to leave event.";
+
+      setMessage(Array.isArray(errorMessage) ? errorMessage[0] : errorMessage);
     }
   };
 
@@ -239,11 +234,11 @@ function EventDetail() {
       await fetchEvent();
     } catch (err) {
       console.error(err);
-      if (err.response?.data) {
-        setMessage(JSON.stringify(err.response.data));
-      } else {
-        setMessage("Failed to update event.");
-      }
+
+      const errorMessage =
+        err?.response?.data?.detail || "Failed to update event.";
+
+      setMessage(Array.isArray(errorMessage) ? errorMessage[0] : errorMessage);
     }
   };
 

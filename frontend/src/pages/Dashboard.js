@@ -5,7 +5,6 @@ import Navbar from "../components/Navbar";
 import "../styles/dashboard.css";
 import API_BASE_URL from "../config";
 
-
 function Dashboard() {
   const [events, setEvents] = useState([]);
   const [participants, setParticipants] = useState([]);
@@ -45,11 +44,11 @@ function Dashboard() {
         setRegistrations(allRegistrations);
         setCurrentUser(user);
 
-        const myParticipant = allParticipants.find((p) => p.user === user.id);
+        const myParticipantId = user?.participant?.participant_id;
 
-        if (myParticipant) {
+        if (myParticipantId) {
           const myEventIds = allRegistrations
-            .filter((r) => r.participant === myParticipant.id)
+            .filter((r) => r.participant === myParticipantId)
             .map((r) => r.event);
 
           const registeredEvents = allEvents.filter((event) =>
@@ -62,15 +61,23 @@ function Dashboard() {
         }
       } catch (err) {
         console.error(err);
+        setMyEvents([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    if (token) {
+      fetchData();
+    } else {
+      setLoading(false);
+    }
   }, [token]);
 
-  const isAdmin = currentUser?.is_staff || currentUser?.is_superuser;
+  const isAdmin =
+    currentUser?.participant?.role === "admin" ||
+    currentUser?.is_staff ||
+    currentUser?.is_superuser;
 
   const activeEvents = useMemo(() => {
     return events.filter((event) => event.status === "ongoing");
@@ -121,53 +128,64 @@ function Dashboard() {
     </div>
   );
 
-  const renderMyEvents = () => (
-    <div className="dashboard-section">
-      <h3>My Registered Events</h3>
+  const renderMyEvents = () => {
+    const sortedMyEvents = [...myEvents].sort((a, b) => {
+      const order = {
+        ongoing: 0,
+        coming: 1,
+        finished: 2,
+      };
+      return (order[a.status] ?? 99) - (order[b.status] ?? 99);
+    });
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : myEvents.length > 0 ? (
-        myEvents.map((event) => (
-          <div key={event.id} className="my-event-card">
-            <h4>{event.title}</h4>
+    return (
+      <div className="dashboard-section">
+        <h3>My Registered Events</h3>
 
-            <p>
-              <strong>Status:</strong>{" "}
-              <span className={`status-badge ${event.status}`}>
-                {formatStatus(event.status)}
-              </span>
-            </p>
+        {loading ? (
+          <p>Loading...</p>
+        ) : sortedMyEvents.length > 0 ? (
+          <div className="dashboard-events-grid">
+            {sortedMyEvents.map((event) => (
+              <div key={event.id} className="dashboard-event-card">
+                <div className="dashboard-event-header">
+                  <h4>{event.title}</h4>
+                  <span className={`status-badge ${event.status}`}>
+                    {formatStatus(event.status)}
+                  </span>
+                </div>
 
-            <p>
-              <strong>Start:</strong> {formatDateTime(event.start_time)}
-            </p>
+                <p>
+                  <strong>Start:</strong> {formatDateTime(event.start_time)}
+                </p>
 
-            <p>
-              <strong>End:</strong> {formatDateTime(event.end_time)}
-            </p>
+                <p>
+                  <strong>End:</strong> {formatDateTime(event.end_time)}
+                </p>
 
-            <p>
-              <strong>Location:</strong> {event.location}
-            </p>
+                <p>
+                  <strong>Location:</strong> {event.location}
+                </p>
 
-            <Link
-              to={`/events/${event.id}`}
-              state={{ from: "/dashboard" }}
-              className="my-event-link"
-            >
-              View Details
-            </Link>
+                <Link
+                  to={`/events/${event.id}`}
+                  state={{ from: "/dashboard" }}
+                  className="my-event-link"
+                >
+                  View Details
+                </Link>
+              </div>
+            ))}
           </div>
-        ))
-      ) : (
-        <p>You have not registered for any events yet.</p>
-      )}
-    </div>
-  );
+        ) : (
+          <p>You have not registered for any events yet.</p>
+        )}
+      </div>
+    );
+  };
 
   const renderAdminPanel = () => (
-    <>
+    <div className="admin-dashboard-grid">
       <div className="dashboard-section">
         <h3>Active Events</h3>
 
@@ -198,7 +216,7 @@ function Dashboard() {
       <div className="dashboard-section">
         <h3>Quick Actions</h3>
 
-        <div className="quick-actions">
+        <div className="quick-actions quick-actions-vertical">
           <Link to="/events" className="action-btn primary">
             Manage Events
           </Link>
@@ -247,7 +265,8 @@ function Dashboard() {
               <div key={registration.id} className="dashboard-row">
                 <div className="dashboard-row-left">
                   <span className="dashboard-row-title">
-                    {registration.participant_name || `Participant #${registration.participant}`}
+                    {registration.participant_name ||
+                      `Participant #${registration.participant}`}
                   </span>
                   <span className="dashboard-row-subtitle">
                     {event ? event.title : `Event #${registration.event}`}
@@ -260,7 +279,7 @@ function Dashboard() {
           <p>No registrations yet.</p>
         )}
       </div>
-    </>
+    </div>
   );
 
   return (

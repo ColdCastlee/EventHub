@@ -43,7 +43,11 @@ function Navbar() {
   };
 
   const isLoggedIn = !!currentUser;
-  const isAdmin = currentUser?.is_staff || currentUser?.is_superuser;
+
+  const isAdmin =
+    currentUser?.participant?.role === "admin" ||
+    currentUser?.is_staff ||
+    currentUser?.is_superuser;
 
   return (
     <nav className="navbar">
@@ -61,7 +65,7 @@ function Navbar() {
           Events
         </Link>
 
-        {isAdmin && (
+        {isLoggedIn && (
           <>
             <span className="navbar-separator">|</span>
             <Link className="navbar-link" to="/participants">
@@ -77,6 +81,14 @@ function Navbar() {
             <span className="navbar-user">
               {currentUser?.username || "User"}
             </span>
+
+            {isAdmin && (
+              <>
+                <span className="navbar-separator">|</span>
+                <span className="navbar-role">Admin</span>
+              </>
+            )}
+
             <span className="navbar-separator">|</span>
             <button className="navbar-logout" onClick={handleLogout}>
               Logout

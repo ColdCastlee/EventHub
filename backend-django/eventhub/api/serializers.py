@@ -41,17 +41,122 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class ParticipantSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+
     class Meta:
         model = Participant
-        fields = "__all__"
+        fields = [
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "role",
+        ]
+
+
+class ParticipantSelfUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Participant
+        fields = [
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+        ]
+
+    def validate_email(self, value):
+        participant = self.instance
+        if (
+            Participant.objects.exclude(id=participant.id)
+            .filter(email=value)
+            .exists()
+        ):
+            raise serializers.ValidationError("This email is already in use.")
+        return value
+
+
+class AdminParticipantCreateSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
+    first_name = serializers.CharField(required=False, allow_blank=True)
+    last_name = serializers.CharField(required=False, allow_blank=True)
+    phone = serializers.CharField(required=False, allow_blank=True)
+    role = serializers.ChoiceField(
+        choices=[
+            ("admin", "Admin"),
+            ("viewer", "Viewer"),
+            ("participant", "Participant"),
+        ],
+        default="participant",
+    )
+
+    class Meta:
+        model = Participant
+        fields = [
+            "username",
+            "password",
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "role",
+        ]
+
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("This username is already taken.")
+        return value
+
+    def validate_email(self, value):
+        if Participant.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email is already in use.")
+        return value
+
+    def create(self, validated_data):
+        username = validated_data.pop("username")
+        password = validated_data.pop("password")
+        first_name = validated_data.get("first_name", "")
+        last_name = validated_data.get("last_name", "")
+        email = validated_data.get("email", "")
+        phone = validated_data.get("phone", "")
+        role = validated_data.get("role", "participant")
+
+        user = User.objects.create_user(
+            username=username,
+            password=password,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+        )
+
+        participant = Participant.objects.create(
+            user=user,
+            first_name=first_name or username,
+            last_name=last_name,
+            email=email,
+            phone=phone,
+            role=role,
+        )
+
+        return participant
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
     participant_name = serializers.SerializerMethodField(read_only=True)
+    event_title = serializers.CharField(source="event.title", read_only=True)
 
     class Meta:
         model = Registration
-        fields = ["id", "event", "participant", "participant_name", "registered_at"]
+        fields = [
+            "id",
+            "event",
+            "event_title",
+            "participant",
+            "participant_name",
+            "registered_at",
+        ]
         read_only_fields = ["participant", "registered_at"]
 
     def get_participant_name(self, obj):
@@ -87,6 +192,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         return registration
 
+
 class UserRegisterSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(write_only=True, required=False, allow_blank=True)
     last_name = serializers.CharField(write_only=True, required=False, allow_blank=True)
@@ -115,6 +221,18 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {"confirm_password": "Passwords do not match."}
             )
+
+        if User.objects.filter(username=data["username"]).exists():
+            raise serializers.ValidationError(
+                {"username": "This username is already taken."}
+            )
+
+        email = data.get("email")
+        if email and Participant.objects.filter(email=email).exists():
+            raise serializers.ValidationError(
+                {"email": "This email is already in use."}
+            )
+
         return data
 
     def create(self, validated_data):
@@ -137,6 +255,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             last_name=last_name,
             email=validated_data.get("email", ""),
             phone=phone,
+            role="participant",
         )
 
         return user

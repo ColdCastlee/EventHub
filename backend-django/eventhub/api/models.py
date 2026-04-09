@@ -5,12 +5,22 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
 class Participant(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="participant")
+    ROLE_CHOICES = [
+        ("admin", "Admin"),
+        ("viewer", "Viewer"),
+        ("participant", "Participant"),
+    ]
 
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="participant"
+    )
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     phone = models.CharField(max_length=20, blank=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="participant")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -20,10 +30,8 @@ class Event(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     location = models.CharField(max_length=255, blank=True)
-
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property
