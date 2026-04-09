@@ -36,7 +36,6 @@
   font-size: 15px;
 }
 
-/* Shared card */
 .participant-card,
 .participants-admin-card {
   background: rgba(30, 41, 59, 0.92);
@@ -45,7 +44,6 @@
   border-radius: 20px;
 }
 
-/* Profile / create */
 .participants-profile-card {
   margin-bottom: 28px;
   padding: 24px 24px 18px;
@@ -115,7 +113,6 @@
   cursor: not-allowed;
 }
 
-/* 🔥 FINAL BUTTON STYLE (FIXED SIZE) */
 .participants-action-btn,
 .participants-edit-btn,
 .participants-delete-btn,
@@ -155,7 +152,6 @@
   background: linear-gradient(135deg, #64748b, #475569);
 }
 
-/* Admin card */
 .participants-admin-panel {
   margin-bottom: 22px;
 }
@@ -179,7 +175,6 @@
   font-weight: 800;
 }
 
-/* List */
 .participants-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -204,6 +199,7 @@
   font-size: 14px;
   color: #cbd5e1;
   line-height: 1.6;
+  margin: 0;
 }
 
 .participant-detail strong {
@@ -217,7 +213,6 @@
   flex-wrap: nowrap;
 }
 
-/* Responsive */
 @media (max-width: 900px) {
   .participants-page {
     padding: 22px;
